@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/Screens/NotificationScreen.dart';
+import 'package:flutter_application_2/chat/screens/chat_selection_screen.dart';
 import 'SettingsScreen.dart';
 import 'AttendanceScreen.dart';
 import 'ReportScreen.dart';
-import 'ChatScreen.dart';
 
 class StudentDashboardScreen extends StatelessWidget {
   const StudentDashboardScreen({super.key});
@@ -11,7 +12,6 @@ class StudentDashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
-
       // APP BAR
       appBar: AppBar(
         backgroundColor: const Color(0xFF6BB6FF),
@@ -23,7 +23,15 @@ class StudentDashboardScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push (
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const NotificationScreen(),
+                ),
+              );
+              
+            },
           )
         ],
       ),
@@ -36,7 +44,7 @@ class StudentDashboardScreen extends StatelessWidget {
           children: [
 
             const Text(
-              "Game Developer!🔥🔥🔥",
+              "Welcome back, Student!",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
@@ -173,30 +181,11 @@ class StudentDashboardScreen extends StatelessWidget {
             const SizedBox(height: 22),
 
             // QUICK ACTIONS (ONLY 2)
-            const Text(
-              "Quick Actions",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+           
 
             const SizedBox(height: 12),
 
-            Row(
-              children: const [
-                Expanded(
-                  child: ActionCard(
-                    icon: Icons.school,
-                    text: "Faculty Mentor",
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: ActionCard(
-                    icon: Icons.work_outline,
-                    text: "Internship Mentor",
-                  ),
-                ),
-              ],
-            ),
+           
 
             const SizedBox(height: 60),
           ],
@@ -299,7 +288,7 @@ class _CustomBottomNav extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const ChatScreen(),
+                    builder: (_) => ChatSelectionScreen(),
                   ),
                 );
               },
