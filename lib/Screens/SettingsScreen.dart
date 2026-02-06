@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/chat/screens/chat_selection_screen.dart';
 
 import 'StudentDashboardScreen.dart';
 import 'AttendanceScreen.dart';
 import 'ReportScreen.dart';
-import 'ChatScreen.dart';
 import 'Main_Login.dart';
 
 import 'EditProfileScreen.dart';
@@ -314,7 +314,7 @@ class _CustomBottomNav extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const ChatScreen(),
+                    builder: (_) => const ChatSelectionScreen(),
                   ),
                 );
               },

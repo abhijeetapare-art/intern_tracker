@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/chat/screens/chat_selection_screen.dart';
 import 'ViewReportScreen.dart';
 import 'SubmitReportScreen.dart';
 import 'StudentDashboardScreen.dart';
 import 'AttendanceScreen.dart';
 import 'SettingsScreen.dart';
-import 'ChatScreen.dart';
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({Key? key}) : super(key: key);
@@ -299,7 +299,7 @@ class _CustomBottomNav extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const ChatScreen(),
+                    builder: (_) => const ChatSelectionScreen(),
                   ),
                 );
               },

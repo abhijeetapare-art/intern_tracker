@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/chat/screens/chat_selection_screen.dart';
 import 'PastAttendanceScreen.dart';
 import 'StudentDashboardScreen.dart';
 import 'ReportScreen.dart';
 import 'SettingsScreen.dart';
-import 'ChatScreen.dart';
 
 class AttendanceScreen extends StatelessWidget {
   const AttendanceScreen({super.key});
@@ -292,7 +292,7 @@ class _CustomBottomNav extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const ChatScreen(),
+                    builder: (_) => const ChatSelectionScreen(),
                   ),
                 );
               },
