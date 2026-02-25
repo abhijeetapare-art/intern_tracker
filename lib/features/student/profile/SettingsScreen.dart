@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/features/chat/screens/chat_selection_screen.dart';
+import 'package:flutter_application_2/features/student/profile/NotificationSettingScreen.dart';
 
 import '../dashboard/StudentDashboardScreen.dart';
 import '../attendance/AttendanceScreen.dart';
@@ -41,8 +42,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             /// PROFILE CARD
+            /// PROFILE CARD (UPDATED)
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -64,35 +65,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Text(
                           "Alex Johnson",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        Text(
-                          "alex_johnson@university.edu",
-                          style:
-                              TextStyle(fontSize: 12, color: Colors.grey),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                         SizedBox(height: 4),
                         Text(
-                          "Student",
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w500),
+                          "alex_johnson@university.edu",
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
+                        SizedBox(height: 6),
+                        Text(
+                          "2023CS101 - Information Technology",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 2),
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const EditProfileScreen(),
-                        ),
-                      );
-                    },
-                  )
                 ],
               ),
             ),
@@ -114,7 +107,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               child: Column(
                 children: [
-
                   /// EDIT PROFILE
                   SettingsTile(
                     icon: Icons.person_outline,
@@ -141,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const NotificationScreen(),
+                          builder: (_) => const NotificationSettingsScreen(),
                         ),
                       );
                     },
@@ -171,8 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             /// DARK MODE (UI ONLY)
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
@@ -187,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged: (v) {
                       setState(() => isDarkMode = v);
                     },
-                  )
+                  ),
                 ],
               ),
             ),
@@ -199,17 +190,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const LoginScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
                   (route) => false,
                 );
               },
               icon: const Icon(Icons.logout, color: Colors.red),
-              label: const Text(
-                "Log Out",
-                style: TextStyle(color: Colors.red),
-              ),
+              label: const Text("Log Out", style: TextStyle(color: Colors.red)),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.red),
                 minimumSize: const Size(double.infinity, 48),
@@ -243,14 +229,12 @@ class _CustomBottomNav extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-
           Container(
             height: 56,
             color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-
                 _navItem(
                   icon: Icons.home,
                   label: "Home",
@@ -259,8 +243,7 @@ class _CustomBottomNav extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            const StudentDashboardScreen(),
+                        builder: (_) => const StudentDashboardScreen(),
                       ),
                     );
                   },
@@ -289,9 +272,7 @@ class _CustomBottomNav extends StatelessWidget {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const ReportScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const ReportScreen()),
                     );
                   },
                 ),

@@ -18,8 +18,18 @@ class _ReportScreenState extends State<ReportScreen> {
   int selectedYear = 2026;
 
   final List<String> months = const [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   final List<int> years = [2025, 2026, 2027];
@@ -61,12 +71,24 @@ class _ReportScreenState extends State<ReportScreen> {
       backgroundColor: const Color(0xFFF4F6F8),
 
       /// 🔙 APP BAR
+      /// 🔙 SMART APP BAR
       appBar: AppBar(
         backgroundColor: const Color(0xFF6BB6FF),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const StudentDashboardScreen(),
+                ),
+              );
+            }
+          },
         ),
         title: const Text("REPORTS"),
       ),
@@ -77,41 +99,47 @@ class _ReportScreenState extends State<ReportScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             /// FILTERS
             Row(
               children: [
-                Expanded(child: _dropdown(
-                  DropdownButton<int>(
-                    value: selectedMonth,
-                    isExpanded: true,
-                    items: List.generate(12, (i) =>
-                      DropdownMenuItem(
-                        value: i + 1,
-                        child: Text(months[i]),
+                Expanded(
+                  child: _dropdown(
+                    DropdownButton<int>(
+                      value: selectedMonth,
+                      isExpanded: true,
+                      items: List.generate(
+                        12,
+                        (i) => DropdownMenuItem(
+                          value: i + 1,
+                          child: Text(months[i]),
+                        ),
                       ),
+                      onChanged: (v) {
+                        if (v != null) setState(() => selectedMonth = v);
+                      },
                     ),
-                    onChanged: (v) {
-                      if (v != null) setState(() => selectedMonth = v);
-                    },
                   ),
-                )),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: _dropdown(
-                  DropdownButton<int>(
-                    value: selectedYear,
-                    isExpanded: true,
-                    items: years.map((y) =>
-                      DropdownMenuItem(
-                        value: y,
-                        child: Text(y.toString()),
-                      ),
-                    ).toList(),
-                    onChanged: (v) {
-                      if (v != null) setState(() => selectedYear = v);
-                    },
+                Expanded(
+                  child: _dropdown(
+                    DropdownButton<int>(
+                      value: selectedYear,
+                      isExpanded: true,
+                      items: years
+                          .map(
+                            (y) => DropdownMenuItem(
+                              value: y,
+                              child: Text(y.toString()),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (v) {
+                        if (v != null) setState(() => selectedYear = v);
+                      },
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
 
@@ -224,19 +252,15 @@ class _CustomBottomNav extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-
           Container(
             height: 56,
             decoration: const BoxDecoration(
               color: Colors.white,
-              boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 8),
-              ],
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-
                 _navItem(
                   icon: Icons.home,
                   label: "Home",
@@ -281,9 +305,7 @@ class _CustomBottomNav extends StatelessWidget {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const SettingsScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
                     );
                   },
                 ),
@@ -420,7 +442,10 @@ class _ReportCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: _statusColor().withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),

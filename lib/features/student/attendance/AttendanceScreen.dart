@@ -13,14 +13,23 @@ class AttendanceScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
 
-      /// 🔙 APP BAR WITH BACK BUTTON
+      /// 🔙 SMART BACK BUTTON
       appBar: AppBar(
         backgroundColor: const Color(0xFF6BB6FF),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const StudentDashboardScreen(),
+                ),
+              );
+            }
           },
         ),
         title: const Text(
@@ -35,8 +44,6 @@ class AttendanceScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            /// OVERALL ATTENDANCE CARD
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -47,13 +54,11 @@ class AttendanceScreen extends StatelessWidget {
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
-                  )
+                  ),
                 ],
               ),
               child: Row(
                 children: [
-
-                  /// BIG FIXED CIRCLE
                   SizedBox(
                     width: 120,
                     height: 120,
@@ -67,8 +72,9 @@ class AttendanceScreen extends StatelessWidget {
                             value: 0.87,
                             strokeWidth: 10,
                             backgroundColor: Colors.grey.shade200,
-                            valueColor:
-                                const AlwaysStoppedAnimation<Color>(Colors.green),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.green,
+                            ),
                           ),
                         ),
                         const Text(
@@ -81,16 +87,11 @@ class AttendanceScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
-
-
-
                   const SizedBox(width: 24),
-
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           "Overall Attendance",
                           style: TextStyle(
@@ -101,10 +102,7 @@ class AttendanceScreen extends StatelessWidget {
                         SizedBox(height: 8),
                         Text(
                           "You are in good standing",
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: Colors.green, fontSize: 14),
                         ),
                       ],
                     ),
@@ -115,7 +113,6 @@ class AttendanceScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            /// MONTH SUMMARY
             const Text(
               "This Month Summary",
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -170,7 +167,6 @@ class AttendanceScreen extends StatelessWidget {
 
             const SizedBox(height: 28),
 
-            /// PAST ATTENDANCE BUTTON
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -196,7 +192,6 @@ class AttendanceScreen extends StatelessWidget {
         ),
       ),
 
-      /// 🔵 CUSTOM BOTTOM NAV (ATTENDANCE ACTIVE)
       bottomNavigationBar: const _CustomBottomNav(currentIndex: 1),
     );
   }
@@ -206,7 +201,7 @@ class AttendanceScreen extends StatelessWidget {
 /// CUSTOM BOTTOM NAV
 /// ============================
 class _CustomBottomNav extends StatelessWidget {
-  final int currentIndex; // 0=Home,1=Attendance,2=Report,3=Settings
+  final int currentIndex;
 
   const _CustomBottomNav({required this.currentIndex});
 
@@ -217,19 +212,15 @@ class _CustomBottomNav extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-
           Container(
             height: 56,
             decoration: const BoxDecoration(
               color: Colors.white,
-              boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 8),
-              ],
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-
                 _navItem(
                   icon: Icons.home,
                   label: "Home",
@@ -243,16 +234,13 @@ class _CustomBottomNav extends StatelessWidget {
                     );
                   },
                 ),
-
                 _navItem(
                   icon: Icons.check_circle_outline,
                   label: "Attendance",
                   active: currentIndex == 1,
                   onTap: () {},
                 ),
-
                 const SizedBox(width: 60),
-
                 _navItem(
                   icon: Icons.description,
                   label: "Report",
@@ -260,13 +248,10 @@ class _CustomBottomNav extends StatelessWidget {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const ReportScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const ReportScreen()),
                     );
                   },
                 ),
-
                 _navItem(
                   icon: Icons.settings,
                   label: "Settings",
@@ -274,17 +259,13 @@ class _CustomBottomNav extends StatelessWidget {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const SettingsScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
                     );
                   },
                 ),
               ],
             ),
           ),
-
-          /// CENTER CHAT
           Positioned(
             top: 0,
             child: GestureDetector(
@@ -383,13 +364,7 @@ class CountCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 2),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 13,
-              color: color,
-            ),
-          ),
+          Text(title, style: TextStyle(fontSize: 13, color: color)),
         ],
       ),
     );
