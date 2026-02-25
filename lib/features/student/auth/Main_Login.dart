@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'CreateAccountScreen.dart';
 import '../dashboard/StudentDashboardScreen.dart';
+import '../../principal/dashboard/principal_dashboard_screen.dart';
 
 /// TEMPORARY Principal Screen (Create separate file later if needed)
 class PrincipalScreen extends StatelessWidget {
@@ -71,7 +72,9 @@ class _LoginScreenState extends State<LoginScreen>
     } else if (selectedRole == "Principal") {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const PrincipalScreen()),
+        MaterialPageRoute(
+          builder: (context) => const PrincipalDashboardScreen(),
+        ),
       );
     }
   }
