@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../../models/student_draft.dart';
+import '../../../../models/student_draft.dart';
 
-class MentorInfoScreen extends StatefulWidget {
-  const MentorInfoScreen({super.key});
+class InternshipDetailsScreen extends StatefulWidget {
+  const InternshipDetailsScreen({super.key});
 
   @override
-  State<MentorInfoScreen> createState() => _MentorInfoScreenState();
+  State<InternshipDetailsScreen> createState() =>
+      _InternshipDetailsScreenState();
 }
 
-class _MentorInfoScreenState extends State<MentorInfoScreen>
+class _InternshipDetailsScreenState extends State<InternshipDetailsScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -17,13 +18,20 @@ class _MentorInfoScreenState extends State<MentorInfoScreen>
   final Color primaryBlue = const Color(0xFF1976D2);
 
   // Controllers (prefilled)
-  final TextEditingController mentorNameController =
-      TextEditingController(text: StudentDraft.mentorName);
-  final TextEditingController mentorMobileController =
-      TextEditingController(text: StudentDraft.mentorMobile);
+  final TextEditingController titleController =
+      TextEditingController(text: StudentDraft.role);
+  final TextEditingController companyController =
+      TextEditingController(text: StudentDraft.company);
+  final TextEditingController startDateController =
+      TextEditingController();
+  final TextEditingController endDateController =
+      TextEditingController();
 
-  String feedbackStatus =
-      StudentDraft.mentorFeedbackStatus ?? "Pending";
+  String internshipType = "Paid";
+  String mode = "Online";
+
+  DateTime? startDate;
+  DateTime? endDate;
 
   @override
   void initState() {
@@ -37,6 +45,15 @@ class _MentorInfoScreenState extends State<MentorInfoScreen>
     _animation = Tween<double>(begin: -200, end: 200).animate(
       CurvedAnimation(parent: _controller, curve: Curves.linear),
     );
+
+    // Prefill duration if available
+    if (StudentDraft.duration != null) {
+      final parts = StudentDraft.duration!.split(" - ");
+      if (parts.length == 2) {
+        startDateController.text = parts[0];
+        endDateController.text = parts[1];
+      }
+    }
   }
 
   @override
@@ -48,9 +65,10 @@ class _MentorInfoScreenState extends State<MentorInfoScreen>
   /// SAVE INTO DRAFT
   void _saveForm() {
     if (_formKey.currentState!.validate()) {
-      StudentDraft.mentorName = mentorNameController.text.trim();
-      StudentDraft.mentorMobile = mentorMobileController.text.trim();
-      StudentDraft.mentorFeedbackStatus = feedbackStatus;
+      StudentDraft.role = titleController.text.trim();
+      StudentDraft.company = companyController.text.trim();
+      StudentDraft.duration =
+          "${startDateController.text} - ${endDateController.text}";
 
       Navigator.pop(context, true);
     }
@@ -94,11 +112,10 @@ class _MentorInfoScreenState extends State<MentorInfoScreen>
                     children: [
                       const SizedBox(height: 50),
 
-                      Icon(Icons.person_outline,
-                          size: 60, color: primaryBlue),
+                      Icon(Icons.work, size: 60, color: primaryBlue),
                       const SizedBox(height: 10),
                       Text(
-                        "Mentor Information",
+                        "Internship Details",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -126,44 +143,36 @@ class _MentorInfoScreenState extends State<MentorInfoScreen>
                           child: Column(
                             children: [
                               _inputField(
-                                "Mentor Name",
-                                mentorNameController,
-                                Icons.person,
+                                "Internship Title",
+                                titleController,
+                                Icons.assignment,
                                 validator: (v) =>
                                     v!.isEmpty ? "Required" : null,
                               ),
                               _inputField(
-                                "Mentor Mobile Number",
-                                mentorMobileController,
-                                Icons.phone,
-                                keyboard: TextInputType.phone,
-                                validator: _validateMobile,
+                                "Company Name",
+                                companyController,
+                                Icons.business,
+                                validator: (v) =>
+                                    v!.isEmpty ? "Required" : null,
                               ),
 
-                              DropdownButtonFormField<String>(
-                                value: feedbackStatus,
-                                items: ["Pending", "Completed", "Reviewed"]
-                                    .map(
-                                      (s) => DropdownMenuItem(
-                                        value: s,
-                                        child: Text(s),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (v) =>
-                                    setState(() => feedbackStatus = v!),
-                                decoration: InputDecoration(
-                                  labelText: "Mentor Feedback Status",
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  prefixIcon: Icon(Icons.feedback,
-                                      color: primaryBlue),
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
+                              _inputField(
+                                "Start Date",
+                                startDateController,
+                                Icons.date_range,
+                                readOnly: true,
+                                onTap: () => _pickDate(true),
+                                validator: (v) =>
+                                    v!.isEmpty ? "Select start date" : null,
+                              ),
+                              _inputField(
+                                "End Date",
+                                endDateController,
+                                Icons.event,
+                                readOnly: true,
+                                onTap: () => _pickDate(false),
+                                validator: _validateEndDate,
                               ),
 
                               const SizedBox(height: 24),
@@ -174,18 +183,15 @@ class _MentorInfoScreenState extends State<MentorInfoScreen>
                                   onPressed: _saveForm,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: primaryBlue,
-                                    padding:
-                                        const EdgeInsets.symmetric(
-                                            vertical: 14),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
                                   child: const Text(
                                     "Save & Go Back",
-                                    style:
-                                        TextStyle(color: Colors.black),
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                               ),
@@ -208,14 +214,16 @@ class _MentorInfoScreenState extends State<MentorInfoScreen>
     String label,
     TextEditingController controller,
     IconData icon, {
-    TextInputType keyboard = TextInputType.text,
+    bool readOnly = false,
+    VoidCallback? onTap,
     String? Function(String?)? validator,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
-        keyboardType: keyboard,
+        readOnly: readOnly,
+        onTap: onTap,
         validator: validator,
         decoration: InputDecoration(
           labelText: label,
@@ -231,10 +239,33 @@ class _MentorInfoScreenState extends State<MentorInfoScreen>
     );
   }
 
-  String? _validateMobile(String? value) {
-    if (value == null || value.isEmpty) return "Required";
-    if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
-      return "Enter 10-digit mobile number";
+  void _pickDate(bool isStart) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+
+    if (picked != null) {
+      if (isStart) {
+        startDate = picked;
+        startDateController.text =
+            "${picked.day}/${picked.month}/${picked.year}";
+      } else {
+        endDate = picked;
+        endDateController.text =
+            "${picked.day}/${picked.month}/${picked.year}";
+      }
+    }
+  }
+
+  String? _validateEndDate(String? value) {
+    if (value == null || value.isEmpty) return "Select end date";
+    if (startDate != null && endDate != null) {
+      if (endDate!.isBefore(startDate!)) {
+        return "End date must be after start date";
+      }
     }
     return null;
   }
