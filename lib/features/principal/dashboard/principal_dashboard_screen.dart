@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import '../students/principal_students_screen.dart';
-import 'widgets/principal_mini_stat_card.dart';
-//import 'package:intern_tracker/features/principal/students/principal_students_screen.dart';
+import '../departments/d_screens/principal_departments_screen.dart';
+import '../departments/d_screens/principal_performance_screen.dart';
+import '../departments/d_screens/principal_profile_screen.dart';
+import 'summary_screens/principal_student_summary_screen.dart';
+import 'summary_screens/principal_active_intern_summary_screen.dart';
+import 'summary_screens/principal_dept_summary_screen.dart';
+import 'principal_notifications_screen.dart';
 
 class PrincipalDashboardScreen extends StatefulWidget {
   const PrincipalDashboardScreen({Key? key}) : super(key: key);
@@ -14,7 +19,6 @@ class PrincipalDashboardScreen extends StatefulWidget {
 class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
   int _currentIndex = 0;
 
-  // 🎨 YOUR COLOR PALETTE
   final Color jasmine = const Color(0xFFFFE588);
   final Color tangerine = const Color(0xFFF79D65);
   final Color strawberry = const Color(0xFFF35252);
@@ -23,171 +27,322 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ✅ RED LINES FIXED: Removed 'const' keywords from the list items below
+    final List<Widget> _pages = [
+      _buildHomeContent(),
+      PrincipalDepartmentScreen(),
+      PrincipalPerformanceScreen(),
+      PrincipalProfileScreen(),
+    ];
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
-
-      // 🔵 TOP APP BAR (same style as student)
+      extendBody: true,
+      // ✅ SINGLE SLIM APPBAR: This is the ONLY AppBar for the entire dashboard
       appBar: AppBar(
         backgroundColor: coolSky,
         elevation: 0,
+        centerTitle: true,
         title: const Text(
           "INTERN TRACKER",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: Icon(Icons.notifications_none, color: Colors.black),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontSize: 18,
           ),
+        ),
+        actions: [
+          // ✅ ALIGNED ICON: Centers the bell vertically with the text
+          IconButton(
+            icon: const Icon(Icons.notifications_none, color: Colors.black),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PrincipalNotificationsScreen(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(width: 8),
         ],
       ),
-
-      // 🔹 BODY
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            const SizedBox(height: 10),
-
-            const Text(
-              "Welcome back, Principal!",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 20),
-
-            // 📊 STAT CARDS (COMPACT LIKE STUDENT)
-            GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 1.8, // 👈 makes same compact size
-              children: [
-                _buildStatCard(
-                  icon: Icons.people,
-                  number: "320",
-                  label: "Total Students",
-                  color: coolSky.withOpacity(0.25),
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              selectedItemColor: coolSky,
+              unselectedItemColor: Colors.grey,
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+              selectedLabelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+              unselectedLabelStyle: const TextStyle(fontSize: 12),
+              onTap: (index) {
+                setState(() => _currentIndex = index);
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  activeIcon: Icon(Icons.home_outlined),
+                  label: "Home",
                 ),
-
-                _buildStatCard(
-                  icon: Icons.work,
-                  number: "210",
-                  label: "Active Interns",
-                  color: jasmine.withOpacity(0.6),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.apartment_outlined),
+                  activeIcon: Icon(Icons.apartment),
+                  label: "Depts",
                 ),
-
-                _buildStatCard(
-                  icon: Icons.pending_actions,
-                  number: "12",
-                  label: "Pending Approvals",
-                  color: strawberry.withOpacity(0.25),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart),
+                  activeIcon: Icon(Icons.bar_chart),
+                  label: "Reports",
                 ),
-
-                _buildStatCard(
-                  icon: Icons.account_balance,
-                  number: "8",
-                  label: "Departments",
-                  color: aquamarine.withOpacity(0.35),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline),
+                  activeIcon: Icon(Icons.person),
+                  label: "Profile",
                 ),
               ],
             ),
-
-            const SizedBox(height: 30),
-
-            // 📌 INSTITUTE SUMMARY (LIKE PROGRESS CARD STYLE)
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: tangerine.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    "Institute Summary",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 10),
-                  Text("• 85% Internship Completion Rate"),
-                  Text("• 92% Attendance Average"),
-                  Text("• 15 New Companies This Year"),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
 
-      // 🔵 BOTTOM NAVIGATION (MATCHING STUDENT STYLE)
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: coolSky,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PrincipalStudentScreen(),
+  Widget _buildHomeContent() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: ListView(
+        children: [
+          const SizedBox(height: 10),
+          const Text(
+            "Institute Performance Overview",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              _buildStatCard(
+                icon: Icons.people,
+                number: "320",
+                label: "Student Info",
+                color: coolSky.withOpacity(0.25),
+                iconColor: Colors.blue,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PrincipalStudentSummaryScreen(),
+                  ),
+                ),
               ),
-            );
-          } else {
-            setState(() {
-              _currentIndex = index;
-            });
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: "Dashboard",
+              const SizedBox(width: 12),
+              _buildStatCard(
+                icon: Icons.work,
+                number: "210",
+                label: "Active Interns",
+                color: jasmine.withOpacity(0.6),
+                iconColor: Colors.orange,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const PrincipalActiveInternSummaryScreen(),
+                  ),
+                ),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Students"),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.approval),
-            label: "Approvals",
+          const SizedBox(height: 32),
+          const Text(
+            "Overall Internship Completion",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: "Alerts",
+          const SizedBox(height: 16),
+          _buildPieChartSection("85% Achievement Rate", 0.85, aquamarine),
+          const SizedBox(height: 32),
+          const Text(
+            "Departmental Progress",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          const SizedBox(height: 16),
+          _buildBarGraph("Computer Science", 0.92, coolSky),
+          _buildBarGraph("Information Tech.", 0.80, jasmine),
+          _buildBarGraph("Mechanical Eng.", 0.65, tangerine),
+          _buildBarGraph("Civil Engineering", 0.40, strawberry),
+          const SizedBox(height: 110),
         ],
       ),
     );
   }
 
-  // 📦 COMPACT STAT CARD (same feel as student screen)
+  Widget _buildPieChartSection(String label, double percentage, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                height: 90,
+                width: 90,
+                child: CircularProgressIndicator(
+                  value: percentage,
+                  strokeWidth: 12,
+                  color: color,
+                  backgroundColor: Colors.grey[100],
+                ),
+              ),
+              Text(
+                "${(percentage * 100).toInt()}%",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Text(
+                "Institute Average",
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBarGraph(String label, double progress, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                "${(progress * 100).toInt()}%",
+                style: TextStyle(color: color, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 14,
+              color: color,
+              backgroundColor: Colors.grey[200],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildStatCard({
     required IconData icon,
     required String number,
     required String label,
     required Color color,
+    required Color iconColor,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 26),
-          const SizedBox(height: 12),
-          Text(
-            number,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 85,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(16),
           ),
-          const SizedBox(height: 4),
-          Text(label),
-        ],
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, size: 22, color: iconColor),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      number,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
