@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/features/student/auth/Main_Login.dart';
 import 'features/faculty/dashboard/screens/faculty_dashboard_screen.dart';
 
 void main() {
@@ -23,7 +24,7 @@ class InternTrackerApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const FacultyDashboardScreen(),
+      home: const LoginScreen(),
     );
   }
 }

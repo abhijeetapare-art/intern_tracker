@@ -13,25 +13,10 @@ class AttendanceScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
 
-      /// 🔙 SMART BACK BUTTON
       appBar: AppBar(
         backgroundColor: const Color(0xFF6BB6FF),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            } else {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const StudentDashboardScreen(),
-                ),
-              );
-            }
-          },
-        ),
+        
         title: const Text(
           "ATTENDANCE",
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -177,7 +162,8 @@ class AttendanceScreen extends StatelessWidget {
                 );
               },
               icon: const Icon(Icons.calendar_month),
-              label: const Text("View Past Attendance (Month)"),
+              label: const Text("View Past Attendance",
+                  style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 backgroundColor: const Color(0xFF6BB6FF),
@@ -192,137 +178,10 @@ class AttendanceScreen extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: const _CustomBottomNav(currentIndex: 1),
     );
   }
 }
 
-/// ============================
-/// CUSTOM BOTTOM NAV
-/// ============================
-class _CustomBottomNav extends StatelessWidget {
-  final int currentIndex;
-
-  const _CustomBottomNav({required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 72,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            height: 56,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _navItem(
-                  icon: Icons.home,
-                  label: "Home",
-                  active: currentIndex == 0,
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const StudentDashboardScreen(),
-                      ),
-                    );
-                  },
-                ),
-                _navItem(
-                  icon: Icons.check_circle_outline,
-                  label: "Attendance",
-                  active: currentIndex == 1,
-                  onTap: () {},
-                ),
-                const SizedBox(width: 60),
-                _navItem(
-                  icon: Icons.description,
-                  label: "Report",
-                  active: currentIndex == 2,
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ReportScreen()),
-                    );
-                  },
-                ),
-                _navItem(
-                  icon: Icons.settings,
-                  label: "Settings",
-                  active: currentIndex == 3,
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 0,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChatSelectionScreen(),
-                  ),
-                );
-              },
-              child: Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  border: Border.all(color: Colors.blue, width: 4),
-                ),
-                child: const Icon(
-                  Icons.chat_bubble_outline,
-                  color: Colors.blue,
-                  size: 30,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _navItem({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    required bool active,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: active ? Colors.blue : Colors.grey),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: active ? Colors.blue : Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 /// ============================
 /// COUNT CARD

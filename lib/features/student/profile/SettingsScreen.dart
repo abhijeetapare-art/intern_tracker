@@ -1,14 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/features/chat/screens/chat_selection_screen.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:flutter_application_2/features/student/profile/NotificationSettingScreen.dart';
 
-import '../dashboard/StudentDashboardScreen.dart';
-import '../attendance/AttendanceScreen.dart';
-import '../reports/ReportScreen.dart';
 import '../auth/Main_Login.dart';
 
 import 'EditProfileScreen.dart';
-import 'NotificationScreen.dart';
 import 'PrivacySecurityScreen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -19,10 +17,29 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+
   bool isDarkMode = false;
+
+  File? profileImage;
+  final ImagePicker _picker = ImagePicker();
+
+  /// PICK PROFILE IMAGE
+  Future<void> _pickProfileImage() async {
+    final XFile? picked = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 75,
+    );
+
+    if (picked != null) {
+      setState(() {
+        profileImage = File(picked.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F4F4),
 
@@ -31,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: const Color(0xFF6BB6FF),
         elevation: 0,
         title: const Text(
-          "INTERN TRACKER",
+          "SETTINGS",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -42,8 +59,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             /// PROFILE CARD
-            /// PROFILE CARD (UPDATED)
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -52,16 +69,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               child: Row(
                 children: [
-                  const CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Colors.redAccent,
-                    child: Icon(Icons.person, color: Colors.white),
+
+                  /// PROFILE IMAGE PICKER
+                  Stack(
+                    children: [
+
+                      GestureDetector(
+                        onTap: _pickProfileImage,
+                        child: CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Colors.redAccent,
+                          backgroundImage: profileImage != null
+                              ? FileImage(profileImage!)
+                              : null,
+                          child: profileImage == null
+                              ? const Icon(Icons.person, color: Colors.white)
+                              : null,
+                        ),
+                      ),
+
+                      /// CAMERA ICON
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            size: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
+
                   const SizedBox(width: 12),
+
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
                         Text(
                           "Alex Johnson",
                           style: TextStyle(
@@ -69,12 +122,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             fontSize: 16,
                           ),
                         ),
+
                         SizedBox(height: 4),
+
                         Text(
                           "alex_johnson@university.edu",
                           style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
+
                         SizedBox(height: 6),
+
                         Text(
                           "2023CS101 - Information Technology",
                           style: TextStyle(
@@ -82,6 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
+
                         SizedBox(height: 2),
                       ],
                     ),
@@ -107,6 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               child: Column(
                 children: [
+
                   /// EDIT PROFILE
                   SettingsTile(
                     icon: Icons.person_outline,
@@ -133,7 +192,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const NotificationSettingsScreen(),
+                          builder: (_) =>
+                              const NotificationSettingsScreen(),
                         ),
                       );
                     },
@@ -141,7 +201,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   const Divider(height: 1),
 
-                  /// PRIVACY & SECURITY
+                  /// PRIVACY
                   SettingsTile(
                     icon: Icons.lock_outline,
                     title: "Privacy & Security",
@@ -161,18 +221,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const SizedBox(height: 16),
 
-            /// DARK MODE (UI ONLY)
+            /// DARK MODE
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Row(
                 children: [
+
                   const Icon(Icons.dark_mode, color: Colors.blue),
+
                   const SizedBox(width: 12),
+
                   const Expanded(child: Text("Dark Mode")),
+
                   Switch(
                     value: isDarkMode,
                     onChanged: (v) {
@@ -185,7 +250,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const SizedBox(height: 20),
 
-            /// LOG OUT
+            /// LOGOUT
             OutlinedButton.icon(
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
@@ -195,7 +260,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               },
               icon: const Icon(Icons.logout, color: Colors.red),
-              label: const Text("Log Out", style: TextStyle(color: Colors.red)),
+              label:
+                  const Text("Log Out", style: TextStyle(color: Colors.red)),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.red),
                 minimumSize: const Size(double.infinity, 48),
@@ -207,136 +273,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
       ),
-
-      /// BOTTOM NAV (SETTINGS ACTIVE)
-      bottomNavigationBar: const _CustomBottomNav(currentIndex: 3),
-    );
-  }
-}
-
-////////////////////////////////////////////////////////////
-/// CUSTOM BOTTOM NAV
-////////////////////////////////////////////////////////////
-class _CustomBottomNav extends StatelessWidget {
-  final int currentIndex;
-
-  const _CustomBottomNav({required this.currentIndex});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 72,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            height: 56,
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _navItem(
-                  icon: Icons.home,
-                  label: "Home",
-                  active: currentIndex == 0,
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const StudentDashboardScreen(),
-                      ),
-                    );
-                  },
-                ),
-
-                _navItem(
-                  icon: Icons.check_circle_outline,
-                  label: "Attendance",
-                  active: currentIndex == 1,
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const AttendanceScreen(),
-                      ),
-                    );
-                  },
-                ),
-
-                const SizedBox(width: 60),
-
-                _navItem(
-                  icon: Icons.description,
-                  label: "Report",
-                  active: currentIndex == 2,
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const ReportScreen()),
-                    );
-                  },
-                ),
-
-                _navItem(
-                  icon: Icons.settings,
-                  label: "Settings",
-                  active: currentIndex == 3,
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
-
-          /// CENTER CHAT
-          Positioned(
-            top: 0,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ChatSelectionScreen(),
-                  ),
-                );
-              },
-              child: Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  border: Border.all(color: Colors.blue, width: 4),
-                ),
-                child: const Icon(Icons.chat, color: Colors.blue),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _navItem({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    required bool active,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: active ? Colors.blue : Colors.grey),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: active ? Colors.blue : Colors.grey,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -344,6 +280,7 @@ class _CustomBottomNav extends StatelessWidget {
 ////////////////////////////////////////////////////////////
 /// SETTINGS TILE
 ////////////////////////////////////////////////////////////
+
 class SettingsTile extends StatelessWidget {
   final IconData icon;
   final String title;
