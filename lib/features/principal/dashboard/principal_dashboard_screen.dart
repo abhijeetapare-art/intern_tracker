@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../students/principal_students_screen.dart';
 import '../departments/d_screens/principal_departments_screen.dart';
-import '../departments/d_screens/principal_performance_screen.dart';
+// ✅ FIXED IMPORT: Points to the combined module file
+import '../departments/d_screens/principal_companies_module.dart';
 import '../departments/d_screens/principal_profile_screen.dart';
 import 'summary_screens/principal_student_summary_screen.dart';
 import 'summary_screens/principal_active_intern_summary_screen.dart';
@@ -18,6 +19,7 @@ class PrincipalDashboardScreen extends StatefulWidget {
 
 class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
   int _currentIndex = 0;
+  bool _hasNewNotifications = true;
 
   final Color jasmine = const Color(0xFFFFE588);
   final Color tangerine = const Color(0xFFF79D65);
@@ -27,18 +29,17 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ RED LINES FIXED: Removed 'const' keywords from the list items below
     final List<Widget> _pages = [
       _buildHomeContent(),
       PrincipalDepartmentScreen(),
-      PrincipalPerformanceScreen(),
+      // ✅ Now correctly references the class inside principal_companies_module.dart
+      const PrincipalCompanyTab(),
       PrincipalProfileScreen(),
     ];
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
       extendBody: true,
-      // ✅ SINGLE SLIM APPBAR: This is the ONLY AppBar for the entire dashboard
       appBar: AppBar(
         backgroundColor: coolSky,
         elevation: 0,
@@ -52,17 +53,47 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
           ),
         ),
         actions: [
-          // ✅ ALIGNED ICON: Centers the bell vertically with the text
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Colors.black),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PrincipalNotificationsScreen(),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: Icon(
+                  _hasNewNotifications
+                      ? Icons.notifications_active
+                      : Icons.notifications_none,
+                  color: Colors.black,
                 ),
-              );
-            },
+                onPressed: () {
+                  setState(() {
+                    _hasNewNotifications = false;
+                  });
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PrincipalNotificationsScreen(),
+                    ),
+                  );
+                },
+              ),
+              if (_hasNewNotifications)
+                Positioned(
+                  right: 12,
+                  top: 12,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: coolSky, width: 1.5),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 8,
+                      minHeight: 8,
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(width: 8),
         ],
@@ -104,7 +135,7 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home_outlined),
-                  activeIcon: Icon(Icons.home_outlined),
+                  activeIcon: Icon(Icons.home),
                   label: "Home",
                 ),
                 BottomNavigationBarItem(
@@ -113,9 +144,9 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
                   label: "Depts",
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart),
-                  activeIcon: Icon(Icons.bar_chart),
-                  label: "Reports",
+                  icon: Icon(Icons.business_center_outlined),
+                  activeIcon: Icon(Icons.business_center),
+                  label: "Companies",
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person_outline),
@@ -179,16 +210,16 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildPieChartSection("85% Achievement Rate", 0.85, aquamarine),
+          _buildPieChartSection("85% Completion Rate", 0.85, aquamarine),
           const SizedBox(height: 32),
           const Text(
             "Departmental Progress",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildBarGraph("Computer Science", 0.92, coolSky),
-          _buildBarGraph("Information Tech.", 0.80, jasmine),
-          _buildBarGraph("Mechanical Eng.", 0.65, tangerine),
+          _buildBarGraph("Information Tech.", 0.92, coolSky),
+          _buildBarGraph("Computer Engineering", 0.80, jasmine),
+          _buildBarGraph("Mechanical Engineering", 0.65, tangerine),
           _buildBarGraph("Civil Engineering", 0.40, strawberry),
           const SizedBox(height: 110),
         ],

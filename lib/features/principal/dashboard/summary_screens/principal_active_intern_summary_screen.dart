@@ -37,7 +37,7 @@ class PrincipalActiveInternSummaryScreen extends StatelessWidget {
 
             // Basic Info Cards
             _buildInfoTile("Total Students Placed", "210", coolSky),
-            _buildInfoTile("Ongoing Internships", "185", jasmine),
+            // ✅ REMOVED: Ongoing Internships row
             _buildInfoTile("Completed This Month", "25", aquamarine),
 
             const SizedBox(height: 24),
@@ -52,17 +52,7 @@ class PrincipalActiveInternSummaryScreen extends StatelessWidget {
             _buildCompanyItem("Microsoft", "32 Interns"),
             _buildCompanyItem("Tesla", "18 Interns"),
 
-            const SizedBox(height: 30),
-            Center(
-              child: Text(
-                "Use the bottom bar icons for full management.",
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ),
+            // ✅ REMOVED: Bottom instruction text and its Center widget
           ],
         ),
       ),

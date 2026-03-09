@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PrincipalNotificationsScreen extends StatefulWidget {
-  PrincipalNotificationsScreen({super.key});
+  const PrincipalNotificationsScreen({super.key});
 
   @override
   State<PrincipalNotificationsScreen> createState() =>
@@ -10,151 +10,153 @@ class PrincipalNotificationsScreen extends StatefulWidget {
 
 class _PrincipalNotificationsScreenState
     extends State<PrincipalNotificationsScreen> {
-  final Color coolSky = const Color(0xFF60B5FF);
-  final Color jasmine = const Color(0xFFFFE588);
-  final Color strawberry = const Color(0xFFF35252);
+  // 📝 LOCAL STATE: This stores your notifications temporarily
+  final List<Map<String, String>> _allNotifications = [
+    {"title": "Welcome", "desc": "System is ready.", "type": "Alert"},
+  ];
 
-  // ✅ LOCAL STATE: Controls the unread status of items on this screen
-  bool _allItemsRead = false;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
+  String _selectedType = "Alert";
+
+  // Function to add the new notification to the list
+  void _handlePublish() {
+    if (_titleController.text.isNotEmpty && _descController.text.isNotEmpty) {
+      setState(() {
+        _allNotifications.add({
+          "title": _titleController.text,
+          "desc": _descController.text,
+          "type": _selectedType,
+        });
+      });
+
+      // Clear fields and switch to the relevant tab
+      _titleController.clear();
+      _descController.clear();
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Published to $_selectedType")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        backgroundColor: coolSky,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          "NOTIFICATIONS",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            fontSize: 18,
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: const Text(
+            "Notifications",
+            style: TextStyle(color: Colors.black),
+          ),
+          bottom: const TabBar(
+            labelColor: Color(0xFF64A9F6),
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Color(0xFF64A9F6),
+            tabs: [
+              Tab(text: "Alerts"),
+              Tab(text: "Notices"),
+              Tab(text: "Publish"),
+            ],
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black,
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
+        body: TabBarView(
+          children: [
+            // Alerts Tab: Filters local list for 'Alert'
+            _buildFilteredList("Alert", Icons.notifications),
+            // Notices Tab: Filters local list for 'Notice'
+            _buildFilteredList("Notice", Icons.campaign),
+            // Publish Tab
+            _buildPublishTab(),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              // ✅ UI UPDATE: Marks everything on this screen as read
-              setState(() {
-                _allItemsRead = true;
-              });
-            },
-            child: const Text(
-              "Read all",
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildNotificationItem(
-            title: "Urgent: Report Pending",
-            desc: "CS Department has 15 unverified internship reports.",
-            time: "10 mins ago",
-            icon: Icons.priority_high,
-            iconColor: strawberry,
-            isNew: _allItemsRead ? false : true,
-          ),
-          _buildNotificationItem(
-            title: "System Update",
-            desc: "The Intern Tracker will undergo maintenance at 12:00 AM.",
-            time: "2 hours ago",
-            icon: Icons.settings,
-            iconColor: coolSky,
-            isNew: false,
-          ),
-          _buildNotificationItem(
-            title: "New Placement Record",
-            desc: "IT Department reached 90% placement milestone.",
-            time: "5 hours ago",
-            icon: Icons.emoji_events,
-            iconColor: jasmine,
-            isNew: false,
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildNotificationItem({
-    required String title,
-    required String desc,
-    required String time,
-    required IconData icon,
-    required Color iconColor,
-    required bool isNew,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: isNew
-            ? Border.all(color: iconColor.withOpacity(0.3), width: 1)
-            : null,
-      ),
-      child: Row(
+  Widget _buildFilteredList(String type, IconData icon) {
+    final filtered = _allNotifications.where((n) => n["type"] == type).toList();
+
+    return filtered.isEmpty
+        ? const Center(child: Text("No items yet"))
+        : ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: filtered.length,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FB),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: ListTile(
+                  leading: Icon(icon, color: Colors.black87),
+                  title: Text(filtered[index]["title"]!),
+                  subtitle: Text(filtered[index]["desc"]!),
+                ),
+              );
+            },
+          );
+  }
+
+  Widget _buildPublishTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            backgroundColor: iconColor.withOpacity(0.1),
-            child: Icon(icon, color: iconColor, size: 20),
+          const Text(
+            "Notification Type",
+            style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    if (isNew) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: iconColor,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  desc,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
+          DropdownButton<String>(
+            value: _selectedType,
+            isExpanded: true,
+            items: const [
+              DropdownMenuItem(value: "Alert", child: Text("Alert")),
+              DropdownMenuItem(value: "Notice", child: Text("Notice")),
+            ],
+            onChanged: (val) => setState(() => _selectedType = val!),
+          ),
+          const SizedBox(height: 25),
+          TextField(
+            controller: _titleController,
+            decoration: const InputDecoration(
+              labelText: "Title",
+              border: OutlineInputBorder(),
             ),
           ),
-          Text(
-            time,
-            style: const TextStyle(color: Colors.black54, fontSize: 10),
+          const SizedBox(height: 20),
+          TextField(
+            controller: _descController,
+            maxLines: 4,
+            decoration: const InputDecoration(
+              labelText: "Description",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 30),
+          Center(
+            child: ElevatedButton(
+              onPressed: _handlePublish,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black87,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              child: const Text("Publish Notification"),
+            ),
           ),
         ],
       ),

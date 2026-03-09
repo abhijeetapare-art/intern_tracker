@@ -1,25 +1,47 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; // ✅ Required for kIsWeb check
+import 'package:image_picker/image_picker.dart';
 import '../../settings/principal_edit_profile_screen.dart';
 import '../../settings/principal_notification_settings_screen.dart';
 import '../../settings/principal_privacy_security_screen.dart';
 import '../../settings/principal_help_support_screen.dart';
 
-// ✅ FIX: Class name must be PrincipalProfileScreen to match Dashboard imports
-class PrincipalProfileScreen extends StatelessWidget {
-  // ✅ RED LINE FIX: Removed 'const' keyword
+class PrincipalProfileScreen extends StatefulWidget {
   PrincipalProfileScreen({super.key});
 
+  @override
+  State<PrincipalProfileScreen> createState() => _PrincipalProfileScreenState();
+}
+
+class _PrincipalProfileScreenState extends State<PrincipalProfileScreen> {
   final Color coolSky = const Color(0xFF60B5FF);
   final Color strawberry = const Color(0xFFF35252);
 
+  // ✅ UNIVERSAL DATA: Works for Chrome (Blob) and Mobile (Path)
+  String? _imagePath;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        _imagePath = pickedFile.path;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ❌ NO Scaffold or AppBar here: This stops the bulky double-header
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ✅ Page title moved into the body for a clean executive look
+          // ✅ Clean Title
           const Padding(
             padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Text(
@@ -45,46 +67,81 @@ class PrincipalProfileScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundColor: strawberry,
-                  child: const Icon(
-                    Icons.person,
-                    size: 40,
-                    color: Colors.white,
+                // ✅ UPDATED: Universal Profile Image Logic
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.grey[200],
+                        backgroundImage: _imagePath != null
+                            ? (kIsWeb
+                                  ? NetworkImage(_imagePath!)
+                                  : FileImage(File(_imagePath!))
+                                        as ImageProvider)
+                            : null,
+                        child: _imagePath == null
+                            ? Icon(
+                                Icons.person,
+                                size: 45,
+                                color: Colors.grey[400],
+                              )
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: coolSky,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            size: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Dr. Arindam Das",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Dr. Arindam Das",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const Text(
-                      "principal@university.edu",
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Principal | University Institute",
-                      style: TextStyle(
-                        color: coolSky,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                      const Text(
+                        "principal@university.edu",
+                        style: TextStyle(color: Colors.grey, fontSize: 13),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        "Principal | University Institute",
+                        style: TextStyle(
+                          color: coolSky,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
 
-          // ⚙️ Settings Section
+          // ⚙️ Settings Section (Restored)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
@@ -140,7 +197,7 @@ class PrincipalProfileScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // 🚪 Logout Button
+                // 🚪 Logout Button (Restored)
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(

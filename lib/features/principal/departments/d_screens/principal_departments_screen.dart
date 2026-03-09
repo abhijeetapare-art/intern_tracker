@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PrincipalDepartmentScreen extends StatelessWidget {
-  const PrincipalDepartmentScreen({super.key});
+  // ✅ RED LINE FIX: Removed 'const' keyword from constructor
+  PrincipalDepartmentScreen({super.key});
 
   // Colors from your specific palette
   final Color coolSky = const Color(0xFF60B5FF);
@@ -12,7 +13,7 @@ class PrincipalDepartmentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ❌ Scaffold and AppBar removed to prevent double-header
+    // ❌ NO Scaffold or AppBar here: Prevents the bulky double-header
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -33,7 +34,12 @@ class PrincipalDepartmentScreen extends StatelessWidget {
         _buildDeptChartCard("Artificial Intelligence & ML", 42, 60, coolSky),
         _buildDeptChartCard("Computer Engineering", 58, 60, aquamarine),
         _buildDeptChartCard("Information Technology", 35, 40, jasmine),
-        _buildDeptChartCard("Electronics & Telecommunication", 25, 45, coolSky),
+        _buildDeptChartCard(
+          "Electronics & Telecommunication",
+          25,
+          45,
+          coolSky,
+        ),
         _buildDeptChartCard("Electrical Engineering", 30, 50, tangerine),
         _buildDeptChartCard("Mechanical Engineering", 40, 60, tangerine),
         _buildDeptChartCard("Civil Engineering", 15, 55, strawberry),

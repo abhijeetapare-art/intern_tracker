@@ -38,8 +38,8 @@ class PrincipalStudentSummaryScreen extends StatelessWidget {
             // Main Enrollment Stats
             _buildSummaryRow("Total Registered Students", "320", coolSky),
             _buildSummaryRow("Profile Completion Rate", "92%", aquamarine),
-            _buildSummaryRow("Verification Pending", "15", jasmine),
 
+            // ✅ REMOVED: Verification Pending row
             const SizedBox(height: 24),
             const Text(
               "Department-wise Breakdown",
@@ -52,18 +52,7 @@ class PrincipalStudentSummaryScreen extends StatelessWidget {
             _buildDeptListTile("Mechanical Engineering", "100 Students"),
             _buildDeptListTile("Civil Engineering", "100 Students"),
 
-            const SizedBox(height: 30),
-            Center(
-              child: Text(
-                "Use the Person icon in the bottom bar for student management.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ),
+            // ✅ REMOVED: Bottom instruction text and its Center widget
           ],
         ),
       ),
