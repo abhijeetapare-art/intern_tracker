@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import '../students/principal_students_screen.dart';
 import '../departments/d_screens/principal_departments_screen.dart';
-// ✅ FIXED IMPORT: Points to the combined module file
 import '../departments/d_screens/principal_companies_module.dart';
 import '../departments/d_screens/principal_profile_screen.dart';
 import 'summary_screens/principal_student_summary_screen.dart';
 import 'summary_screens/principal_active_intern_summary_screen.dart';
-import 'summary_screens/principal_dept_summary_screen.dart';
 import 'principal_notifications_screen.dart';
 
 class PrincipalDashboardScreen extends StatefulWidget {
@@ -32,7 +30,6 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
     final List<Widget> _pages = [
       _buildHomeContent(),
       PrincipalDepartmentScreen(),
-      // ✅ Now correctly references the class inside principal_companies_module.dart
       const PrincipalCompanyTab(),
       PrincipalProfileScreen(),
     ];
@@ -64,10 +61,7 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
                   color: Colors.black,
                 ),
                 onPressed: () {
-                  setState(() {
-                    _hasNewNotifications = false;
-                  });
-
+                  setState(() => _hasNewNotifications = false);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -99,65 +93,7 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
         ],
       ),
       body: IndexedStack(index: _currentIndex, children: _pages),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: BottomNavigationBar(
-              currentIndex: _currentIndex,
-              selectedItemColor: coolSky,
-              unselectedItemColor: Colors.grey,
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: Colors.white,
-              elevation: 0,
-              showSelectedLabels: true,
-              showUnselectedLabels: true,
-              selectedLabelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-              unselectedLabelStyle: const TextStyle(fontSize: 12),
-              onTap: (index) {
-                setState(() => _currentIndex = index);
-              },
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home_outlined),
-                  activeIcon: Icon(Icons.home),
-                  label: "Home",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.apartment_outlined),
-                  activeIcon: Icon(Icons.apartment),
-                  label: "Depts",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.business_center_outlined),
-                  activeIcon: Icon(Icons.business_center),
-                  label: "Companies",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline),
-                  activeIcon: Icon(Icons.person),
-                  label: "Profile",
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
@@ -174,10 +110,11 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
           const SizedBox(height: 20),
           Row(
             children: [
+              // ✅ Updated: Overall Student Info Card (No Count)
               _buildStatCard(
                 icon: Icons.people,
-                number: "320",
-                label: "Student Info",
+                number: "View",
+                label: "Overall Student Info",
                 color: coolSky.withOpacity(0.25),
                 iconColor: Colors.blue,
                 onTap: () => Navigator.push(
@@ -188,10 +125,11 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
                 ),
               ),
               const SizedBox(width: 12),
+              // ✅ Updated: Active Intern Info Card (No Count)
               _buildStatCard(
                 icon: Icons.work,
-                number: "210",
-                label: "Active Interns",
+                number: "Track",
+                label: "Active Intern Info",
                 color: jasmine.withOpacity(0.6),
                 iconColor: Colors.orange,
                 onTap: () => Navigator.push(
@@ -223,6 +161,66 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
           _buildBarGraph("Civil Engineering", 0.40, strawberry),
           const SizedBox(height: 110),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard({
+    required IconData icon,
+    required String number,
+    required String label,
+    required Color color,
+    required Color iconColor,
+    VoidCallback? onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 85,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, size: 22, color: iconColor),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      number,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -320,56 +318,49 @@ class _PrincipalDashboardScreenState extends State<PrincipalDashboardScreen> {
     );
   }
 
-  Widget _buildStatCard({
-    required IconData icon,
-    required String number,
-    required String label,
-    required Color color,
-    required Color iconColor,
-    VoidCallback? onTap,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 85,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, size: 22, color: iconColor),
+  Widget _buildBottomNavBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            selectedItemColor: coolSky,
+            unselectedItemColor: Colors.grey,
+            type: BottomNavigationBarType.fixed,
+            onTap: (index) => setState(() => _currentIndex = index),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: "Home",
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      number,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      label,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.apartment_outlined),
+                activeIcon: Icon(Icons.apartment),
+                label: "Depts",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.business_center_outlined),
+                activeIcon: Icon(Icons.business_center),
+                label: "Companies",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline),
+                activeIcon: Icon(Icons.person),
+                label: "Profile",
               ),
             ],
           ),

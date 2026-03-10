@@ -31,15 +31,10 @@ class PrincipalDepartmentScreen extends StatelessWidget {
         const SizedBox(height: 24),
 
         // 📊 List of 9 Departments
-        _buildDeptChartCard("Artificial Intelligence & ML", 42, 60, coolSky),
+        _buildDeptChartCard("Information Technology", 42, 60, coolSky),
         _buildDeptChartCard("Computer Engineering", 58, 60, aquamarine),
-        _buildDeptChartCard("Information Technology", 35, 40, jasmine),
-        _buildDeptChartCard(
-          "Electronics & Telecommunication",
-          25,
-          45,
-          coolSky,
-        ),
+        _buildDeptChartCard("Artificial Intelligence & ML", 35, 40, jasmine),
+        _buildDeptChartCard("Electronics & Telecommunication", 25, 45, coolSky),
         _buildDeptChartCard("Electrical Engineering", 30, 50, tangerine),
         _buildDeptChartCard("Mechanical Engineering", 40, 60, tangerine),
         _buildDeptChartCard("Civil Engineering", 15, 55, strawberry),

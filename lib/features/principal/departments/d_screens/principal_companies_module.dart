@@ -307,7 +307,7 @@ class PrincipalCompanyDetailsScreen extends StatelessWidget {
                       ),
                       onPressed: () {},
                       child: const Text(
-                        "Apply Now",
+                        "Contact Now",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
