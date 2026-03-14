@@ -1,6 +1,6 @@
 name: flutter_application_2
 description: "A new Flutter project."
-publish_to: 'none' 
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -12,9 +12,8 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-
-  # ✅ ADDED: image_picker for profile photo functionality
   image_picker: ^1.1.2
+  fl_chart: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -24,10 +23,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
   assets:
     - assets/images/
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icons/logo.png"
+  image_path: "assets/icons/interntracker_icon.png"

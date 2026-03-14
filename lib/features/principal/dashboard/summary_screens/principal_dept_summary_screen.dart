@@ -1,87 +1,64 @@
 import 'package:flutter/material.dart';
+import 'principal_student_list_screen.dart';
 
 class PrincipalDeptSummaryScreen extends StatelessWidget {
   const PrincipalDeptSummaryScreen({super.key});
 
-  // Colors from your specific palette
-  final Color aquamarine = const Color(0xFF5EF2D5);
-  final Color coolSky = const Color(0xFF60B5FF);
-  final Color jasmine = const Color(0xFFFFE588);
+  final Color coolBlue = const Color(0xFF60B5FF);
 
   @override
   Widget build(BuildContext context) {
+    // List of departments for navigation
+    final List<String> departments = [
+      "Information Technology",
+      "Computer Engineering",
+      "Mechanical Engineering",
+      "Civil Engineering",
+      "Electrical Engineering",
+      "Electronics & TC",
+      "Automobile Engineering",
+      "DDGM",
+      "AIML",
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: coolBlue,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Departmental Overview",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          "Department Overview",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: coolSky,
-        elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Institute Branch Status",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              "Institute Departments",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-
-            // Branch Status Metrics
-            _buildDeptStatusTile(
-              "Computer Science",
-              "Active HOD",
-              "85% Placement",
-              aquamarine,
-            ),
-            _buildDeptStatusTile(
-              "Mechanical Eng.",
-              "Active HOD",
-              "65% Placement",
-              coolSky,
-            ),
-            _buildDeptStatusTile(
-              "Civil Engineering",
-              "Pending HOD",
-              "40% Placement",
-              jasmine,
-            ),
-
-            const SizedBox(height: 24),
+            const SizedBox(height: 10),
             const Text(
-              "Administrative Coverage",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "Select a department to view specific enrollment and placement records.",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 25),
 
-            // Summary Statistics
-            const Card(
-              child: ListTile(
-                leading: Icon(Icons.check_circle, color: Colors.green),
-                title: Text("8 Total Departments"),
-                subtitle: Text("7 HODs Approved & Active"),
-              ),
-            ),
-
-            const SizedBox(height: 30),
-            Center(
-              child: Text(
-                "Use the Department icon in the bottom bar for full management.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
+            // --- DEPT LIST GENERATOR ---
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: departments.length,
+              itemBuilder: (context, index) {
+                return _buildSimpleDeptTile(context, departments[index]);
+              },
             ),
           ],
         ),
@@ -89,42 +66,43 @@ class PrincipalDeptSummaryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDeptStatusTile(
-    String name,
-    String hodStatus,
-    String placement,
-    Color accentColor,
-  ) {
+  Widget _buildSimpleDeptTile(BuildContext context, String title) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: accentColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: accentColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("HOD: $hodStatus", style: const TextStyle(fontSize: 13)),
-              Text(
-                placement,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-            ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        leading: CircleAvatar(
+          backgroundColor: coolBlue.withOpacity(0.1),
+          child: Icon(Icons.account_balance, color: coolBlue, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+        ),
+        trailing: const Icon(Icons.chevron_right, color: Colors.black26),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PrincipalStudentListScreen(
+                department: title,
+                year: "2026", // Defaulting to current year
+              ),
+            ),
+          );
+        },
       ),
     );
   }
